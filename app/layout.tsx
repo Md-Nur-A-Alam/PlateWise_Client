@@ -6,6 +6,8 @@ import { Navbar, Footer, PageContainer } from "@/components/layout";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
+import { QueryProvider } from "@/components/providers/QueryProvider";
+
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
@@ -21,16 +23,18 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={inter.className}>
-        <ThemeProvider>
-          <div className="flex min-h-screen flex-col bg-background text-foreground">
-            <Navbar />
-            <PageContainer>
-              {children}
-            </PageContainer>
-            <Footer />
-          </div>
-          <ToastContainer />
-        </ThemeProvider>
+        <QueryProvider>
+          <ThemeProvider>
+            <div className="flex min-h-screen flex-col bg-background text-foreground">
+              <Navbar />
+              <PageContainer>
+                {children}
+              </PageContainer>
+              <Footer />
+            </div>
+            <ToastContainer />
+          </ThemeProvider>
+        </QueryProvider>
       </body>
     </html>
   );

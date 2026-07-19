@@ -22,14 +22,14 @@ export function RecipeCard({ recipe }: RecipeCardProps) {
   const imageUrl = recipe.images?.[0] || 'https://images.unsplash.com/photo-1495195134817-a165d42e6bc1?q=80&w=800&auto=format&fit=crop';
   
   return (
-    <Link href={`/recipes/${recipe._id}`} className="block h-full group">
-      <Card className="h-full flex flex-col overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:border-primary/50">
-        <div className="relative h-48 w-full overflow-hidden bg-muted">
+    <Link href={`/recipes/${recipe._id}`} className="block group animate-fade-in-up">
+      <Card className="h-full flex flex-col group-hover:-translate-y-1 group-hover:shadow-lg group-hover:shadow-primary/10 transition-all duration-300">
+        <div className="relative w-full h-48 bg-muted overflow-hidden">
           <Image
             src={imageUrl}
             alt={recipe.title}
             fill
-            className="object-cover transition-transform duration-500 group-hover:scale-105"
+            className="object-cover transition-transform duration-500 group-hover:scale-110"
             sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
           />
           <div className="absolute top-2 right-2">
