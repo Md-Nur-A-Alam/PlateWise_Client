@@ -1,12 +1,13 @@
 import { betterAuth } from "better-auth";
 import { jwt, bearer } from "better-auth/plugins";
+import { mongodbAdapter } from "@better-auth/mongo-adapter";
+import { MongoClient } from "mongodb";
+import { toNextJsHandler } from "better-auth/next-js";
+
+const client = new MongoClient(process.env.MONGODB_URI as string);
 
 export const auth = betterAuth({
-  database: {
-    // Better Auth can connect to mongodb via string or custom driver. We will just use the string.
-    provider: "mongodb",
-    url: process.env.MONGODB_URI as string,
-  },
+  database: mongodbAdapter(client.db()),
   emailAndPassword: {
     enabled: true,
   },
@@ -32,4 +33,4 @@ export const auth = betterAuth({
   secret: process.env.BETTER_AUTH_SECRET as string,
 });
 
-export const { GET, POST } = auth.handler;
+export const { GET, POST } = toNextJsHandler(auth.handler);
