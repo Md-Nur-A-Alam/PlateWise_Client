@@ -2,16 +2,24 @@
 
 import * as React from 'react';
 import Image from 'next/image';
-import { Github, Linkedin, Facebook, Youtube, Globe, Code } from 'lucide-react';
+import { Globe, Code, Menu, X } from 'lucide-react';
 import { ThemeToggle } from '../ui/ThemeToggle';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { authClient, signOut } from '@/lib/auth-client';
 import { Button } from '../ui/Button';
+import { FaFacebookSquare, FaGithub, FaLinkedin } from 'react-icons/fa';
+import { IoLogoYoutube } from 'react-icons/io';
 
 export function Navbar() {
   const { data: session, isPending } = authClient.useSession();
   const router = useRouter();
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false);
+  const pathname = usePathname();
+
+  React.useEffect(() => {
+    setIsMobileMenuOpen(false);
+  }, [pathname]);
 
   const handleLogout = async () => {
     await signOut();
@@ -22,6 +30,13 @@ export function Navbar() {
     <header className='sticky top-0 z-50 w-full border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60'>
       <div className='container mx-auto flex h-14 items-center justify-between px-4'>
         <div className='flex items-center space-x-4'>
+          <button 
+            className='md:hidden p-1 -ml-1 mr-2 text-foreground focus:outline-none' 
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            aria-label='Toggle Menu'
+          >
+            {isMobileMenuOpen ? <X className='w-6 h-6' /> : <Menu className='w-6 h-6' />}
+          </button>
           <Link href='/' className='font-bold text-xl text-primary'>PlateWise</Link>
           <nav className='hidden md:flex items-center space-x-4 text-sm font-medium'>
             <Link href='/recipes' className='transition-colors hover:text-primary'>Explore</Link>
@@ -37,25 +52,62 @@ export function Navbar() {
             )}
           </nav>
         </div>
-        <div className='flex items-center space-x-4'>
+        <div className='flex items-center space-x-2 sm:space-x-4'>
           <ThemeToggle />
           {!isPending && !session ? (
-            <>
+            <div className='hidden sm:flex items-center space-x-4'>
               <Link href='/login' className='text-sm font-medium hover:text-primary'>Login</Link>
               <Link href='/register'>
                 <Button size="sm" variant="primary">Sign Up</Button>
               </Link>
-            </>
+            </div>
           ) : !isPending && session ? (
-            <div className='flex items-center space-x-4'>
+            <div className='flex items-center space-x-2 sm:space-x-4'>
               <span className='text-sm text-neutral-foreground hidden sm:inline-block'>
                 Hello, {session.user.name.split(' ')[0]}
               </span>
-              <Button onClick={handleLogout} variant="ghost" size="sm">Logout</Button>
+              <Button onClick={handleLogout} variant="ghost" size="sm" className="hidden sm:inline-flex">Logout</Button>
             </div>
           ) : null}
         </div>
       </div>
+      
+      {/* Mobile Menu */}
+      {isMobileMenuOpen && (
+        <div className='md:hidden absolute top-14 left-0 w-full bg-background border-b border-border shadow-lg'>
+          <nav className='flex flex-col p-4 space-y-4 text-sm font-medium'>
+            <Link href='/recipes' className='transition-colors hover:text-primary'>Explore</Link>
+            <Link href='/about' className='transition-colors hover:text-primary'>About</Link>
+            
+            {session && (
+              <>
+                <Link href='/recipes/add' className='transition-colors hover:text-primary text-accent'>Add Recipe</Link>
+                <Link href='/recipes/manage' className='transition-colors hover:text-primary'>Manage Recipes</Link>
+                <Link href='/ai/generate' className='transition-colors hover:text-primary text-primary'>AI Generate</Link>
+                <Link href='/ai/recommendations' className='transition-colors hover:text-primary'>AI Recommendations</Link>
+              </>
+            )}
+            
+            <div className='pt-4 border-t border-border flex flex-col space-y-4'>
+              {!isPending && !session ? (
+                <>
+                  <Link href='/login' className='w-full text-left transition-colors hover:text-primary'>Login</Link>
+                  <Link href='/register'>
+                    <Button size="sm" variant="primary" className='w-full'>Sign Up</Button>
+                  </Link>
+                </>
+              ) : !isPending && session ? (
+                <>
+                  <span className='text-sm text-neutral-foreground'>
+                    Signed in as {session.user.name}
+                  </span>
+                  <Button onClick={handleLogout} variant="ghost" size="sm" className="w-full justify-start px-0">Logout</Button>
+                </>
+              ) : null}
+            </div>
+          </nav>
+        </div>
+      )}
     </header>
   );
 }
@@ -91,16 +143,16 @@ export function Footer() {
                 <Globe className='w-4 h-4' />
               </a>
               <a href='https://github.com/Md-Nur-A-Alam' target='_blank' rel='noreferrer' className='hover:text-primary transition-colors' title='GitHub'>
-                <Github className='w-4 h-4' />
+                <FaGithub className='w-4 h-4' />
               </a>
               <a href='https://www.linkedin.com/in/md-nur-a-alam13/' target='_blank' rel='noreferrer' className='hover:text-primary transition-colors' title='LinkedIn'>
-                <Linkedin className='w-4 h-4' />
+                <FaLinkedin className='w-4 h-4' />
               </a>
               <a href='https://web.facebook.com/Md.NurAAlamSoikot/' target='_blank' rel='noreferrer' className='hover:text-primary transition-colors' title='Facebook'>
-                <Facebook className='w-4 h-4' />
+                <FaFacebookSquare className='w-4 h-4' />
               </a>
               <a href='https://www.youtube.com/@NurAAlam44' target='_blank' rel='noreferrer' className='hover:text-primary transition-colors' title='YouTube'>
-                <Youtube className='w-4 h-4' />
+                <IoLogoYoutube className='w-4 h-4' />
               </a>
               <a href='https://codeforces.com/profile/Nur_Alam.2812' target='_blank' rel='noreferrer' className='hover:text-primary transition-colors' title='Codeforces'>
                 <Code className='w-4 h-4' />

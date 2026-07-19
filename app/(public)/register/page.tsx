@@ -29,6 +29,24 @@ type RegisterFormValues = z.infer<typeof registerSchema>;
 export default function RegisterPage() {
   const router = useRouter();
   const [isLoading, setIsLoading] = React.useState(false);
+  const [isGoogleLoading, setIsGoogleLoading] = React.useState(false);
+
+  const onGoogleLogin = async () => {
+    setIsGoogleLoading(true);
+    try {
+      const { error } = await authClient.signIn.social({
+        provider: "google",
+        callbackURL: "/",
+      });
+      if (error) {
+        notify.error("Google login error: " + error.message);
+      }
+    } catch (err) {
+      notify.error("Failed to initialize Google login. Check environment variables.");
+    } finally {
+      setIsGoogleLoading(false);
+    }
+  };
 
   const {
     register,
@@ -97,11 +115,28 @@ export default function RegisterPage() {
             error={errors.confirmPassword?.message}
             {...register("confirmPassword")}
           />
-          <Button type="submit" className="w-full" isLoading={isLoading}>
+          <Button type="submit" className="w-full" isLoading={isLoading} disabled={isGoogleLoading}>
             Sign Up
           </Button>
         </form>
-        <div className="mt-4 text-center text-sm">
+
+        <div className="my-6 flex items-center">
+          <div className="flex-1 border-t border-border"></div>
+          <span className="px-3 text-sm text-neutral-foreground">OR</span>
+          <div className="flex-1 border-t border-border"></div>
+        </div>
+
+        <Button
+          variant="secondary"
+          className="w-full"
+          onClick={onGoogleLogin}
+          isLoading={isGoogleLoading}
+          disabled={isLoading}
+        >
+          Sign up with Google
+        </Button>
+
+        <div className="mt-6 text-center text-sm">
           Already have an account?{" "}
           <Link href="/login" className="text-primary hover:underline">
             Log in
