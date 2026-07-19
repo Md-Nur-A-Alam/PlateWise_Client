@@ -10,6 +10,7 @@ import { authClient, signOut } from '@/lib/auth-client';
 import { Button } from '../ui/Button';
 import { FaFacebookSquare, FaGithub, FaLinkedin } from 'react-icons/fa';
 import { IoLogoYoutube } from 'react-icons/io';
+import { cn } from '@/lib/utils';
 
 export function Navbar() {
   const { data: session, isPending } = authClient.useSession();
@@ -26,8 +27,27 @@ export function Navbar() {
     router.push('/');
   };
 
+  const NavLink = ({ href, children, highlight = false }: { href: string, children: React.ReactNode, highlight?: boolean }) => {
+    const isActive = pathname === href || (href !== '/' && pathname.startsWith(href));
+    return (
+      <Link 
+        href={href} 
+        className={cn(
+          'relative px-3 py-2 text-sm font-medium transition-colors hover:text-primary',
+          isActive ? 'text-primary' : 'text-neutral-foreground',
+          highlight && !isActive ? 'text-accent' : ''
+        )}
+      >
+        {children}
+        {isActive && (
+          <span className="absolute bottom-0 left-0 w-full h-0.5 bg-primary rounded-full animate-fade-in-up shadow-[0_0_8px_rgba(var(--primary),0.5)]"></span>
+        )}
+      </Link>
+    );
+  };
+
   return (
-    <header className='sticky top-0 z-50 w-full border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60'>
+    <header className='sticky top-0 z-50 w-full glass supports-[backdrop-filter]:bg-background/40'>
       <div className='container mx-auto flex h-14 items-center justify-between px-4'>
         <div className='flex items-center space-x-4'>
           <button 
@@ -38,16 +58,16 @@ export function Navbar() {
             {isMobileMenuOpen ? <X className='w-6 h-6' /> : <Menu className='w-6 h-6' />}
           </button>
           <Link href='/' className='font-bold text-xl text-primary'>PlateWise</Link>
-          <nav className='hidden md:flex items-center space-x-4 text-sm font-medium'>
-            <Link href='/recipes' className='transition-colors hover:text-primary'>Explore</Link>
-            <Link href='/about' className='transition-colors hover:text-primary'>About</Link>
+          <nav className='hidden md:flex items-center space-x-2'>
+            <NavLink href='/recipes'>Explore</NavLink>
+            <NavLink href='/about'>About</NavLink>
             
             {session && (
               <>
-                <Link href='/recipes/add' className='transition-colors hover:text-primary text-accent'>Add Recipe</Link>
-                <Link href='/recipes/manage' className='transition-colors hover:text-primary'>Manage Recipes</Link>
-                <Link href='/ai/generate' className='transition-colors hover:text-primary text-primary'>AI Generate</Link>
-                <Link href='/ai/recommendations' className='transition-colors hover:text-primary'>AI Recommendations</Link>
+                <NavLink href='/recipes/add' highlight>Add Recipe</NavLink>
+                <NavLink href='/recipes/manage'>Manage Recipes</NavLink>
+                <NavLink href='/ai/generate'>AI Generate</NavLink>
+                <NavLink href='/ai/recommendations'>AI Recommendations</NavLink>
               </>
             )}
           </nav>
@@ -56,17 +76,17 @@ export function Navbar() {
           <ThemeToggle />
           {!isPending && !session ? (
             <div className='hidden sm:flex items-center space-x-4'>
-              <Link href='/login' className='text-sm font-medium hover:text-primary'>Login</Link>
+              <Link href='/login' className='text-sm font-medium hover:text-primary transition-colors'>Login</Link>
               <Link href='/register'>
                 <Button size="sm" variant="primary">Sign Up</Button>
               </Link>
             </div>
           ) : !isPending && session ? (
             <div className='flex items-center space-x-2 sm:space-x-4'>
-              <span className='text-sm text-neutral-foreground hidden sm:inline-block'>
+              <span className='text-sm font-medium text-neutral-foreground hidden sm:inline-block'>
                 Hello, {session.user.name.split(' ')[0]}
               </span>
-              <Button onClick={handleLogout} variant="ghost" size="sm" className="hidden sm:inline-flex">Logout</Button>
+              <Button onClick={handleLogout} variant="outline" size="sm" className="hidden sm:inline-flex border-border/50 hover:bg-destructive hover:text-white hover:border-destructive transition-colors">Logout</Button>
             </div>
           ) : null}
         </div>
@@ -74,34 +94,34 @@ export function Navbar() {
       
       {/* Mobile Menu */}
       {isMobileMenuOpen && (
-        <div className='md:hidden absolute top-14 left-0 w-full bg-background border-b border-border shadow-lg'>
-          <nav className='flex flex-col p-4 space-y-4 text-sm font-medium'>
-            <Link href='/recipes' className='transition-colors hover:text-primary'>Explore</Link>
-            <Link href='/about' className='transition-colors hover:text-primary'>About</Link>
+        <div className='md:hidden absolute top-14 left-0 w-full glass-dark border-t border-border/20 shadow-2xl animate-fade-in-up'>
+          <nav className='flex flex-col p-4 space-y-1'>
+            <NavLink href='/recipes'>Explore</NavLink>
+            <NavLink href='/about'>About</NavLink>
             
             {session && (
               <>
-                <Link href='/recipes/add' className='transition-colors hover:text-primary text-accent'>Add Recipe</Link>
-                <Link href='/recipes/manage' className='transition-colors hover:text-primary'>Manage Recipes</Link>
-                <Link href='/ai/generate' className='transition-colors hover:text-primary text-primary'>AI Generate</Link>
-                <Link href='/ai/recommendations' className='transition-colors hover:text-primary'>AI Recommendations</Link>
+                <NavLink href='/recipes/add' highlight>Add Recipe</NavLink>
+                <NavLink href='/recipes/manage'>Manage Recipes</NavLink>
+                <NavLink href='/ai/generate'>AI Generate</NavLink>
+                <NavLink href='/ai/recommendations'>AI Recommendations</NavLink>
               </>
             )}
             
-            <div className='pt-4 border-t border-border flex flex-col space-y-4'>
+            <div className='pt-4 mt-2 border-t border-border/20 flex flex-col space-y-4'>
               {!isPending && !session ? (
                 <>
-                  <Link href='/login' className='w-full text-left transition-colors hover:text-primary'>Login</Link>
-                  <Link href='/register'>
+                  <Link href='/login' className='w-full text-left px-3 text-sm font-medium transition-colors hover:text-primary'>Login</Link>
+                  <Link href='/register' className="w-full">
                     <Button size="sm" variant="primary" className='w-full'>Sign Up</Button>
                   </Link>
                 </>
               ) : !isPending && session ? (
                 <>
-                  <span className='text-sm text-neutral-foreground'>
+                  <span className='text-sm font-medium text-neutral-foreground px-3'>
                     Signed in as {session.user.name}
                   </span>
-                  <Button onClick={handleLogout} variant="ghost" size="sm" className="w-full justify-start px-0">Logout</Button>
+                  <Button onClick={handleLogout} variant="outline" size="sm" className="w-full justify-start border-border/50 hover:bg-destructive hover:text-white transition-colors">Logout</Button>
                 </>
               ) : null}
             </div>

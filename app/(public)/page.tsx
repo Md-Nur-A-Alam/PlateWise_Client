@@ -107,39 +107,44 @@ export default function HomePage() {
   return (
     <div className="flex flex-col min-h-screen">
       {/* 1. Hero Section */}
-      <section className="relative min-h-[70vh] flex items-center justify-center overflow-hidden bg-gradient-to-br from-primary/5 via-background to-secondary/10 pt-20 pb-16">
-        <div className="container px-4 mx-auto text-center z-10">
-          <Badge className="mb-6 px-3 py-1 bg-primary/10 text-primary border-primary/20 hover:bg-primary/20 transition-colors">
+      <section className="relative min-h-[75vh] flex items-center justify-center overflow-hidden pt-20 pb-16">
+        {/* Animated Background Blobs */}
+        <div className="absolute top-0 -left-4 w-72 h-72 bg-primary/20 rounded-full mix-blend-multiply filter blur-2xl opacity-70 animate-blob"></div>
+        <div className="absolute top-0 -right-4 w-72 h-72 bg-accent/20 rounded-full mix-blend-multiply filter blur-2xl opacity-70 animate-blob animation-delay-2000"></div>
+        <div className="absolute -bottom-8 left-20 w-72 h-72 bg-secondary/20 rounded-full mix-blend-multiply filter blur-2xl opacity-70 animate-blob animation-delay-4000"></div>
+
+        <div className="container px-4 mx-auto text-center z-10 animate-fade-in-up">
+          <Badge className="mb-6 px-3 py-1 bg-primary/10 text-primary border-primary/20 hover:bg-primary/20 transition-colors animate-float">
             AI-Powered Culinary Assistant
           </Badge>
-          <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight text-foreground mb-6 max-w-4xl mx-auto leading-tight">
+          <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight text-foreground mb-6 max-w-4xl mx-auto leading-tight drop-shadow-sm">
             Discover & Create the Perfect <br className="hidden md:block"/>
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-accent">Recipe Every Time</span>
+            <span className="text-gradient">Recipe Every Time</span>
           </h1>
-          <p className="text-lg md:text-xl text-neutral-foreground mb-10 max-w-2xl mx-auto">
+          <p className="text-lg md:text-xl text-neutral-foreground mb-10 max-w-2xl mx-auto font-medium">
             Join thousands of food lovers using PlateWise to organize their recipes, explore new cuisines, and generate personalized dishes with AI.
           </p>
           
           <form onSubmit={handleSearch} className="max-w-xl mx-auto relative mb-12 flex items-center group">
-            <div className="absolute left-4 text-neutral-foreground group-focus-within:text-primary transition-colors">
+            <div className="absolute left-4 text-neutral-foreground group-focus-within:text-primary transition-colors z-10">
               <Search className="w-5 h-5" />
             </div>
             <Input 
               type="text" 
               placeholder="Search recipes, cuisines, or ingredients..."
-              className="pl-12 pr-32 py-6 text-lg rounded-full shadow-lg border-border/50 focus:border-primary focus:ring-primary/20 transition-all bg-background/80 backdrop-blur"
+              className="pl-12 pr-32 py-7 text-lg rounded-2xl shadow-xl shadow-primary/5 border-border/50 focus:border-primary focus:ring-primary/20 transition-all glass hover:shadow-2xl hover:shadow-primary/10"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
-            <Button type="submit" className="absolute right-2 rounded-full px-6 h-10 shadow-sm">
+            <Button type="submit" className="absolute right-2 rounded-xl px-6 h-11 shadow-sm">
               Search
             </Button>
           </form>
 
-          <div className="flex flex-wrap justify-center gap-4 text-sm font-medium">
+          <div className="flex flex-wrap justify-center gap-4 text-sm font-medium opacity-90 hover:opacity-100 transition-opacity">
             <span className="text-neutral-foreground">Popular:</span>
             {CUISINES.slice(0, 3).map(c => (
-              <Link key={c} href={`/recipes?cuisine=${c}`} className="text-primary hover:underline">{c}</Link>
+              <Link key={c} href={`/recipes?cuisine=${c}`} className="text-primary hover:underline hover:text-accent transition-colors">{c}</Link>
             ))}
           </div>
         </div>

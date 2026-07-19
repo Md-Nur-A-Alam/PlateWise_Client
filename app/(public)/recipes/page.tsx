@@ -143,14 +143,14 @@ export default function ExplorePage() {
 
       <div className="flex flex-col lg:flex-row gap-8">
         {/* Filters Sidebar */}
-        <aside className={`lg:w-64 shrink-0 space-y-6 ${isMobileFiltersOpen ? 'block' : 'hidden lg:block'}`}>
-          <div className="bg-muted/30 p-5 rounded-xl border border-border">
-            <div className="flex justify-between items-center mb-4">
-              <h2 className="font-semibold flex items-center gap-2">
-                <Filter className="w-4 h-4" /> Filters
+        <aside className={`lg:w-64 shrink-0 space-y-6 ${isMobileFiltersOpen ? 'block' : 'hidden lg:block'} animate-fade-in-up`}>
+          <div className="glass p-5 rounded-2xl">
+            <div className="flex justify-between items-center mb-5">
+              <h2 className="font-bold text-lg flex items-center gap-2">
+                <Filter className="w-5 h-5 text-primary" /> Filters
               </h2>
               {hasActiveFilters && (
-                <button onClick={clearFilters} className="text-xs text-primary hover:underline font-medium">
+                <button onClick={clearFilters} className="text-xs text-primary hover:text-accent transition-colors font-medium bg-primary/10 px-2 py-1 rounded-full">
                   Clear All
                 </button>
               )}
