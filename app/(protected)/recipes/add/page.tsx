@@ -25,7 +25,7 @@ const recipeSchema = z.object({
   fullDescription: z.string().min(20, 'Full description/instructions must be at least 20 characters'),
   cuisine: z.string().min(1, 'Please select a cuisine'),
   dietType: z.array(z.string()).min(1, 'Select at least one diet type'),
-  cookTimeMinutes: z.coerce.number({ message: 'Cook time is required' }).min(1, 'Cook time must be at least 1 minute'),
+  cookTimeMinutes: z.number({ message: 'Cook time is required' }).min(1, 'Cook time must be at least 1 minute'),
   difficulty: z.enum(['easy', 'medium', 'hard'] as const, { message: 'Please select difficulty' }),
   ingredients: z.array(z.object({
     value: z.string().min(2, 'Ingredient cannot be empty')
@@ -102,24 +102,45 @@ export default function AddRecipePage() {
     if (fileInputRef.current) fileInputRef.current.value = '';
   };
 
+  const [imageUrlInput, setImageUrlInput] = React.useState('');
+
   const uploadSingleImage = async (img: UploadedImage) => {
     if (!img.file) return;
     const formData = new FormData();
     formData.append('image', img.file);
 
-    const res = await uploadImageAction(formData);
-    
-    if (res.success) {
-      setImages(prev => prev.map(p => p.id === img.id ? { ...p, status: 'success', url: res.url! } : p));
-    } else {
-      notify.error(`Failed to upload ${img.file.name}`);
+    try {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/uploads/image`, {
+        method: 'POST',
+        body: formData,
+        credentials: 'include' // Sends the session cookie directly
+      });
+      const data = await res.json();
+      
+      if (res.ok && data.success) {
+        setImages(prev => prev.map(p => p.id === img.id ? { ...p, status: 'success', url: data.data.url } : p));
+      } else {
+        throw new Error(data.message || 'Failed to upload image');
+      }
+    } catch (err: any) {
+      notify.error(`Failed to upload ${img.file.name}: ${err.message}`);
       setImages(prev => prev.map(p => p.id === img.id ? { ...p, status: 'error' } : p));
     }
   };
 
+  const handleAddImageUrl = () => {
+    if (!imageUrlInput.trim()) return;
+    setImages(prev => [...prev, {
+      id: Math.random().toString(36).substring(7),
+      url: imageUrlInput.trim(),
+      status: 'success'
+    }]);
+    setImageUrlInput('');
+  };
+
   const retryUpload = (id: string) => {
     const img = images.find(i => i.id === id);
-    if (img) {
+    if (img && img.file) {
       setImages(prev => prev.map(p => p.id === id ? { ...p, status: 'uploading' } : p));
       uploadSingleImage(img);
     }
@@ -347,7 +368,23 @@ export default function AddRecipePage() {
               multiple 
               onChange={handleFileChange} 
             />
-            <p className="text-xs text-neutral-foreground">Upload at least one high-quality image of the finished dish.</p>
+            
+            <div className="flex items-center gap-2 mt-4">
+              <span className="text-sm font-medium text-neutral-foreground">OR</span>
+              <div className="flex-1 flex gap-2">
+                <Input 
+                  placeholder="Paste image URL here..." 
+                  value={imageUrlInput}
+                  onChange={(e) => setImageUrlInput(e.target.value)}
+                  onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), handleAddImageUrl())}
+                />
+                <Button type="button" variant="secondary" onClick={handleAddImageUrl}>
+                  Add URL
+                </Button>
+              </div>
+            </div>
+            
+            <p className="text-xs text-neutral-foreground mt-4">Upload at least one high-quality image or provide a direct link to an image.</p>
           </div>
         </Card>
 

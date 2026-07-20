@@ -33,7 +33,7 @@ export default function HomePage() {
 
   React.useEffect(() => {
     // Fetch Featured Recipes
-    fetch(`${process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:5000'}/api/recipes?sort=rating&limit=4`)
+    fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/recipes?sort=rating&limit=4`)
       .then(res => res.json())
       .then(data => {
         if (data.success) setRecipes(data.data.recipes);
@@ -42,7 +42,7 @@ export default function HomePage() {
       .catch(() => setIsLoadingRecipes(false));
 
     // Fetch Stats
-    fetch(`${process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:5000'}/api/stats`)
+    fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/stats`)
       .then(res => res.json())
       .then(data => {
         if (data.success) setStats(data.data);
@@ -51,7 +51,7 @@ export default function HomePage() {
 
     // Fetch Reviews (using recipes endpoint to get top rated recipes then simulating reviews for them, or fetching directly if we had a /api/reviews endpoint. Wait, I should fetch real reviews. I didn't add GET /api/reviews in misc. I'll just fetch recipes and use their mock reviews, or let me add a quick GET /api/reviews in misc.routes.ts later. For now, let's fetch recipes and assume we can pull some data)
     // Actually, I'll add a quick GET /api/reviews endpoint in the next step, for now I'll prepare the fetch.
-    fetch(`${process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:5000'}/api/reviews/recent`)
+    fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/reviews/recent`)
       .then(res => res.json())
       .then(data => {
         if (data.success) setReviews(data.data);
@@ -72,7 +72,7 @@ export default function HomePage() {
     
     setIsSubscribing(true);
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:5000'}/api/newsletter`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/newsletter`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email })

@@ -2,19 +2,20 @@
 
 import { cookies } from 'next/headers';
 
-const SERVER_URL = process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:5000';
-
 export async function uploadImageAction(formData: FormData) {
   try {
+    const SERVER_URL = process.env.NEXT_PUBLIC_API_URL;
+    if (!SERVER_URL) throw new Error("NEXT_PUBLIC_API_URL is missing in environment variables");
+
     const cookieStore = await cookies();
-    const cookieHeader = cookieStore.toString();
+    const token = cookieStore.get('better-auth.session_token')?.value || '';
 
     // FormData comes directly from the client with the file appended as 'image'
     // Forward it directly to Express
     const res = await fetch(`${SERVER_URL}/api/uploads/image`, {
       method: 'POST',
       headers: {
-        'Cookie': cookieHeader,
+        'Authorization': `Bearer ${token}`,
         // Do not set Content-Type here, let fetch automatically set it to multipart/form-data with the correct boundary
       },
       body: formData,

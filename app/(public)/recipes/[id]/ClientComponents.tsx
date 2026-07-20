@@ -92,10 +92,9 @@ export function ReviewsSection({
           <h4 className="font-semibold mb-4">Leave a Review</h4>
           <div className="mb-4">
             <RatingStars 
-              value={rating} 
+              rating={rating} 
               onChange={setRating} 
-              readonly={false} 
-              size="lg" 
+              readOnly={false}
             />
           </div>
           <Textarea 
@@ -128,7 +127,7 @@ export function ReviewsSection({
                 </div>
                 <div>
                   <p className="font-semibold">{review.userId?.name || review.user?.name || 'Unknown User'}</p>
-                  <RatingStars value={review.rating} readonly size="sm" />
+                  <RatingStars rating={review.rating} readOnly />
                 </div>
                 <span className="ml-auto text-xs text-neutral-foreground">
                   {new Date(review.createdAt).toLocaleDateString()}

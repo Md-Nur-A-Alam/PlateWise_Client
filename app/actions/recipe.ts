@@ -3,18 +3,19 @@
 import { cookies } from 'next/headers';
 import { revalidatePath } from 'next/cache';
 
-const SERVER_URL = process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:5000';
-
 export async function submitReview(recipeId: string, rating: number, comment: string) {
   try {
+    const SERVER_URL = process.env.NEXT_PUBLIC_API_URL;
+    if (!SERVER_URL) throw new Error("NEXT_PUBLIC_API_URL is missing in environment variables");
+
     const cookieStore = await cookies();
-    const cookieHeader = cookieStore.toString();
+    const token = cookieStore.get('better-auth.session_token')?.value || '';
 
     const res = await fetch(`${SERVER_URL}/api/recipes/${recipeId}/reviews`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Cookie': cookieHeader,
+        'Authorization': `Bearer ${token}`,
       },
       body: JSON.stringify({ rating, comment }),
     });
@@ -33,15 +34,18 @@ export async function submitReview(recipeId: string, rating: number, comment: st
 
 export async function recordViewInteraction(recipeId: string) {
   try {
+    const SERVER_URL = process.env.NEXT_PUBLIC_API_URL;
+    if (!SERVER_URL) throw new Error("NEXT_PUBLIC_API_URL is missing in environment variables");
+
     const cookieStore = await cookies();
-    const cookieHeader = cookieStore.toString();
+    const token = cookieStore.get('better-auth.session_token')?.value || '';
 
     // The API might reject this if there's no auth cookie, so we can just fire-and-forget.
     await fetch(`${SERVER_URL}/api/interactions`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Cookie': cookieHeader,
+        'Authorization': `Bearer ${token}`,
       },
       body: JSON.stringify({ recipeId, type: 'view' }),
     });
@@ -54,14 +58,17 @@ export async function recordViewInteraction(recipeId: string) {
 
 export async function createRecipe(recipeData: any) {
   try {
+    const SERVER_URL = process.env.NEXT_PUBLIC_API_URL;
+    if (!SERVER_URL) throw new Error("NEXT_PUBLIC_API_URL is missing in environment variables");
+
     const cookieStore = await cookies();
-    const cookieHeader = cookieStore.toString();
+    const token = cookieStore.get('better-auth.session_token')?.value || '';
 
     const res = await fetch(`${SERVER_URL}/api/recipes`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Cookie': cookieHeader,
+        'Authorization': `Bearer ${token}`,
       },
       body: JSON.stringify(recipeData),
     });
@@ -81,13 +88,16 @@ export async function createRecipe(recipeData: any) {
 
 export async function deleteRecipe(recipeId: string) {
   try {
+    const SERVER_URL = process.env.NEXT_PUBLIC_API_URL;
+    if (!SERVER_URL) throw new Error("NEXT_PUBLIC_API_URL is missing in environment variables");
+
     const cookieStore = await cookies();
-    const cookieHeader = cookieStore.toString();
+    const token = cookieStore.get('better-auth.session_token')?.value || '';
 
     const res = await fetch(`${SERVER_URL}/api/recipes/${recipeId}`, {
       method: 'DELETE',
       headers: {
-        'Cookie': cookieHeader,
+        'Authorization': `Bearer ${token}`,
       },
     });
 

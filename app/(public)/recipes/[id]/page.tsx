@@ -5,7 +5,7 @@ import { Badge } from '@/components/ui/Badge';
 import { RecipeCard } from '@/components/ui/RecipeCard';
 import { ImageGallery, ReviewsSection, ViewTracker } from './ClientComponents';
 
-const SERVER_URL = process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:5000';
+const SERVER_URL = process.env.NEXT_PUBLIC_API_URL;
 
 async function getRecipeData(id: string) {
   try {

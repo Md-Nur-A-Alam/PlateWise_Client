@@ -29,7 +29,7 @@ function useDebounce<T>(value: T, delay: number): T {
   return debouncedValue;
 }
 
-export default function ExplorePage() {
+function ExploreContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const pathname = usePathname();
@@ -72,7 +72,7 @@ export default function ExplorePage() {
     params.set('page', page.toString());
     params.set('limit', '12');
 
-    const res = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:5000'}/api/recipes?${params.toString()}`);
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/recipes?${params.toString()}`);
     const data = await res.json();
     if (!data.success) throw new Error(data.message);
     return data.data; // { recipes, page, totalPages, total }
@@ -162,8 +162,11 @@ export default function ExplorePage() {
                 <Select 
                   value={sort} 
                   onChange={handleSortChange}
-                  options={SORT_OPTIONS}
-                />
+                >
+                  {SORT_OPTIONS.map(opt => (
+                    <option key={opt.value} value={opt.value}>{opt.label}</option>
+                  ))}
+                </Select>
               </div>
 
               <div>
@@ -171,11 +174,10 @@ export default function ExplorePage() {
                 <Select 
                   value={selectedCuisine} 
                   onChange={handleCuisineChange}
-                  options={[
-                    { label: 'All Cuisines', value: '' },
-                    ...CUISINES.map(c => ({ label: c, value: c }))
-                  ]}
-                />
+                >
+                  <option value="">All Cuisines</option>
+                  {CUISINES.map(c => <option key={c} value={c}>{c}</option>)}
+                </Select>
               </div>
 
               <div>
@@ -269,5 +271,13 @@ export default function ExplorePage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function ExplorePage() {
+  return (
+    <React.Suspense fallback={<div className="container mx-auto px-4 py-8"><Skeleton className="w-full h-screen" /></div>}>
+      <ExploreContent />
+    </React.Suspense>
   );
 }

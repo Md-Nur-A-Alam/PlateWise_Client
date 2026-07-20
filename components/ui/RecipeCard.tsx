@@ -33,7 +33,7 @@ export function RecipeCard({ recipe }: RecipeCardProps) {
             sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
           />
           <div className="absolute top-2 right-2">
-            <Badge variant="secondary" className="bg-background/90 backdrop-blur-sm shadow-sm font-semibold text-xs">
+            <Badge variant="default" className="bg-background/90 backdrop-blur-sm shadow-sm text-foreground text-xs">
               {recipe.cuisine}
             </Badge>
           </div>

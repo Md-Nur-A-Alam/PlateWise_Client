@@ -24,7 +24,7 @@ export default function RecipeError({
       <p className="text-lg text-neutral-foreground mb-8 max-w-md mx-auto">
         We encountered an error while trying to load this recipe.
       </p>
-      <Button onClick={() => reset()} variant="default" size="lg">
+      <Button onClick={() => reset()} variant="primary" size="lg">
         Try Again
       </Button>
     </div>
